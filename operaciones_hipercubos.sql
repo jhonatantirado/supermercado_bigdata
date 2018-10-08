@@ -5,7 +5,7 @@ DECLARE
 	vProductoArroz producto.producto%TYPE; 
 	vProductoAtun producto.producto%TYPE; 
 	vTotalSoles total_venta.total_soles%TYPE;
-	--vTotalDolares total_venta.total_dolares%TYPE;
+	vTotalDolares total_venta.total_dolares%TYPE;
 BEGIN
 
 SELECT tienda INTO vTiendaLaMarina FROM tienda WHERE NOMBRE='TIENDA SAN MIGUEL MARINA';
@@ -17,20 +17,27 @@ SELECT producto INTO vProductoAtun FROM producto WHERE NOMBRE='ATUN';
 SELECT tipo_producto INTO vTipoProductoAbarrotes FROM tipo_producto WHERE NOMBRE='ABARROTES';
 
 --SLICE
-SELECT SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA WHERE tienda = vTiendaLaMarina GROUP BY tienda;
---SELECT SUM(TOTAL_DOLARES) INTO vTotalDolares FROM TOTAL_VENTA WHERE tienda = vTiendaLaMarina GROUP BY tienda;
+SELECT tienda,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
+WHERE tienda = vTiendaLaMarina GROUP BY tienda;
+SELECT tienda,SUM(TOTAL_DOLARES) INTO vTotalDolares FROM TOTAL_VENTA 
+WHERE tienda = vTiendaLaMarina GROUP BY tienda;
 
 --DICE
-SELECT SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
+SELECT tienda,producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
 WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND producto in (vProductoArroz,vProductoAtun)
 GROUP BY tienda,producto;
---SELECT SUM(TOTAL_DOLARES) INTO vTotalSoles FROM TOTAL_VENTA 
---WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND producto in (vProductoArroz,vProductoAtun)
---GROUP BY tienda,producto;
+SELECT tienda,producto,SUM(TOTAL_DOLARES) INTO vTotalDolares FROM TOTAL_VENTA 
+WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND producto in (vProductoArroz,vProductoAtun)
+GROUP BY tienda,producto;
 
 --ROLL UP
-SELECT SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
+SELECT tienda,tipo_producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
 WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND tipo_producto in (vTipoProductoAbarrotes)
 GROUP BY tienda,tipo_producto;
+
+--DRILL DOWN
+SELECT tienda,producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
+WHERE tienda in (vTiendaLaMarina,vTiendaLarco)
+GROUP BY tienda,producto;
 
 END;
