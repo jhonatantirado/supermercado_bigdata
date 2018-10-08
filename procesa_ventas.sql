@@ -21,8 +21,7 @@ CURSOR ven ( pTienda tienda.tienda%TYPE, pCliente cliente.cliente%TYPE, pProduct
 	IS SELECT * FROM venta WHERE procesado = 'N' AND tienda = pTienda; 
 
 BEGIN 
-	dbms_output.enable;    
-	dbms_output.put_line('Hello Reader!'); 
+	
 	FOR t IN tot LOOP 
 		BEGIN 
 			-- Retiene la filas para evitar que otro proceso --------------------- 

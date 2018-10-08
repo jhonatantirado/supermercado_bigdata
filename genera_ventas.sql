@@ -10,7 +10,7 @@ vMonedaNum NUMBER(2);
 vMonedaDesc venta.moneda%TYPE;
 vCantidad venta.cantidad%TYPE;
 vPrecio venta.precio%TYPE;
-vFechaIni DATE := TO_DATE ( '01012016', 'DDMMYYYY' ); 
+vFechaIni DATE := TO_DATE ( '01012017', 'DDMMYYYY' ); 
 vFechaFin DATE := TRUNC ( SYSDATE ); 
 BEGIN 
 	DBMS_RANDOM.initialize ( TO_NUMBER ( TO_CHAR ( SYSDATE, 'HH24MMSS' ) ) ); 
@@ -18,7 +18,7 @@ BEGIN
 	SELECT MAX ( cliente ) INTO vClienteMax FROM cliente; 
 	SELECT MAX ( producto ) INTO vProductoMax FROM producto; 
 	
-	FOR i IN 1..10000 LOOP 
+	FOR i IN 1..200000 LOOP 
 		
 		vTienda := 1 + ABS ( MOD ( DBMS_RANDOM.random, vTiendaMax ) ); 
 		vCliente := 1 + ABS ( MOD ( DBMS_RANDOM.random, vClienteMax ) ); 
@@ -40,5 +40,3 @@ BEGIN
 	END LOOP; 
 COMMIT;
 END;
-/
---@E:\JT-Documentos\Maestria\BigData\Supermercado\genera_ventas.sql
