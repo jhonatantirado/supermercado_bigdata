@@ -141,7 +141,7 @@ INSERT INTO TIENDA(TIENDA ,NOMBRE, DISTRITO) VALUES(SEQ_TIENDA.NEXTVAL,'TIENDA L
 
 
 vTotalDias := vFechaFin - vFechaIni;
-FOR item IN 1..vTotalDias LOOP
+FOR item IN 0..vTotalDias LOOP
 	vFecha := vFechaIni + item;     
 	vAnho := TO_NUMBER ( TO_CHAR ( vFecha, 'YYYY' ) ); 
 	vMes := TO_NUMBER ( TO_CHAR ( vFecha, 'MM' ) ); 

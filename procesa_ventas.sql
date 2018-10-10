@@ -39,25 +39,33 @@ BEGIN
 				vDia := TO_NUMBER ( TO_CHAR ( v.fecha, 'DD' ) ); -- Actualiza total tienda 
 				vHora := TO_NUMBER ( TO_CHAR ( v.fecha, 'HH24' ) ); -- Actualiza total tienda 
 				
-				SELECT fecha INTO vFecha FROM fecha WHERE año = vAño AND mes = vMes AND dia = vDia AND hora = vHora;	-- busca la fecha 
-				
-				-- Actualiza total venta --------------------------------------- 
-				IF v.moneda = 'PEN' THEN
-					vTotalSoles := vTotal;
-					vTotalDolares := vTotal/vTipoCambio;
-				ELSE
-					vTotalSoles := vTotal * vTipoCambio;
-					vTotalDolares := vTotal;
+				BEGIN
+					SELECT fecha INTO vFecha FROM fecha WHERE año = vAño AND mes = vMes AND dia = vDia AND hora = vHora;	-- busca la fecha 
+				EXCEPTION
+					WHEN NO_DATA_FOUND THEN
+						vFecha  := NULL;
+				END;
+				IF vFecha IS NOT NULL THEN
+										-- Actualiza total venta --------------------------------------- 
+					IF v.moneda = 'PEN' THEN
+						vTotalSoles := vTotal;
+						vTotalDolares := vTotal/vTipoCambio;
+					ELSE
+						vTotalSoles := vTotal * vTipoCambio;
+						vTotalDolares := vTotal;
+					END IF;
+					
+					UPDATE total_venta SET total_soles = total_soles + vTotalSoles, total_dolares = total_dolares + vTotalSoles , cantidad = cantidad + v.cantidad 
+					WHERE tienda = v.tienda AND cliente = v.cliente AND producto = v.producto AND tipo_producto = vTipoProducto AND distrito = vDistrito  AND fecha = vFecha;				
+					IF SQL%NOTFOUND THEN 
+						INSERT INTO total_venta ( tienda, cliente, producto, fecha, tipo_producto, distrito, nombre_tienda, nombre_cliente, nombre_producto, total_soles, total_dolares, cantidad ) 
+						VALUES ( v.tienda, v.cliente, v.producto, vFecha, vTipoProducto, vDistrito, vNombreTienda, vNombreCliente, vNombreProducto, vTotalSoles, vTotalDolares, v.cantidad ); 
+					END IF; 
+					------------------------------------------------------------------- 
+					UPDATE venta SET procesado = 'S' WHERE venta = v.venta; 
+
 				END IF;
 				
-				UPDATE total_venta SET total_soles = total_soles + vTotalSoles, total_dolares = total_dolares + vTotalSoles , cantidad = cantidad + v.cantidad 
-				WHERE tienda = v.tienda AND cliente = v.cliente AND producto = v.producto AND tipo_producto = vTipoProducto AND distrito = vDistrito  AND fecha = vFecha;				
-				IF SQL%NOTFOUND THEN 
-					INSERT INTO total_venta ( tienda, cliente, producto, fecha, tipo_producto, distrito, nombre_tienda, nombre_cliente, nombre_producto, total_soles, total_dolares, cantidad ) 
-					VALUES ( v.tienda, v.cliente, v.producto, vFecha, vTipoProducto, vDistrito, vNombreTienda, vNombreCliente, vNombreProducto, vTotalSoles, vTotalDolares, v.cantidad ); 
-				END IF; 
-				------------------------------------------------------------------- 
-				UPDATE venta SET procesado = 'S' WHERE venta = v.venta; 
 			END LOOP; 
 			COMMIT; 
 		EXCEPTION 

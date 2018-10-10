@@ -1,43 +1,25 @@
-DECLARE
-	vTipoProductoAbarrotes tipo_producto.tipo_producto%TYPE; 
-	vTiendaLaMarina tienda.tienda%TYPE; 
-	vTiendaLarco tienda.tienda%TYPE; 
-	vProductoArroz producto.producto%TYPE; 
-	vProductoAtun producto.producto%TYPE; 
-	vTotalSoles total_venta.total_soles%TYPE;
-	vTotalDolares total_venta.total_dolares%TYPE;
-BEGIN
-
-SELECT tienda INTO vTiendaLaMarina FROM tienda WHERE NOMBRE='TIENDA SAN MIGUEL MARINA';
-SELECT tienda INTO vTiendaLarco FROM tienda WHERE NOMBRE='TIENDA MIRAFLORES LARCO';
-
-SELECT producto INTO vProductoArroz FROM producto WHERE NOMBRE='ARROZ';
-SELECT producto INTO vProductoAtun FROM producto WHERE NOMBRE='ATUN';
-
-SELECT tipo_producto INTO vTipoProductoAbarrotes FROM tipo_producto WHERE NOMBRE='ABARROTES';
-
 --SLICE
-SELECT tienda,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
-WHERE tienda = vTiendaLaMarina GROUP BY tienda;
-SELECT tienda,SUM(TOTAL_DOLARES) INTO vTotalDolares FROM TOTAL_VENTA 
-WHERE tienda = vTiendaLaMarina GROUP BY tienda;
+SELECT t.nombre TIENDA,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
+where t.NOMBRE='TIENDA SAN MIGUEL MARINA'
+GROUP BY t.nombre;
 
 --DICE
-SELECT tienda,producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
-WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND producto in (vProductoArroz,vProductoAtun)
-GROUP BY tienda,producto;
-SELECT tienda,producto,SUM(TOTAL_DOLARES) INTO vTotalDolares FROM TOTAL_VENTA 
-WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND producto in (vProductoArroz,vProductoAtun)
-GROUP BY tienda,producto;
+SELECT t.nombre TIENDA,p.nombre PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
+FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
+inner join PRODUCTO P ON P.producto=TV.producto
+where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO') AND p.nombre IN ('ARROZ','ATUN')
+GROUP BY t.nombre,p.nombre;
 
 --ROLL UP
-SELECT tienda,tipo_producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
-WHERE tienda in (vTiendaLaMarina,vTiendaLarco) AND tipo_producto in (vTipoProductoAbarrotes)
-GROUP BY tienda,tipo_producto;
+SELECT t.nombre TIENDA,tp.nombre TIPO_PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
+FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
+inner join TIPO_PRODUCTO TP ON TP.TIPO_PRODUCTO=TV.TIPO_PRODUCTO
+where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO') AND TP.nombre IN ('LACTEOS','CARNES')
+GROUP BY t.nombre,tp.nombre;
 
 --DRILL DOWN
-SELECT tienda,producto,SUM(TOTAL_SOLES) INTO vTotalSoles FROM TOTAL_VENTA 
-WHERE tienda in (vTiendaLaMarina,vTiendaLarco)
-GROUP BY tienda,producto;
-
-END;
+SELECT t.nombre TIENDA,p.nombre PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
+FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
+inner join PRODUCTO P ON P.producto=TV.producto
+where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO')
+GROUP BY t.nombre,p.nombre;
