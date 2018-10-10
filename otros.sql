@@ -36,7 +36,7 @@ where t.nombre IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO')
 ) cte
 group by cte.tienda ;
 
-SELECT * FROM total_Venta where nombre_producto IN ('ARROZ','ATUN') AND TIPO_PRODUCTO=1 ;
+SELECT * FROM total_Venta where nombre_producto IN ('ARROZ','ATUN') AND TIPO_PRODUCTO=1 and nombre_tienda='TIENDA SAN MIGUEL MARINA' ;
 
 select count(*) from venta where procesado='S';
 select count(*) from total_venta;
