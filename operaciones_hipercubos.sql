@@ -8,18 +8,21 @@ SELECT t.nombre TIENDA,p.nombre PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.
 FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
 inner join PRODUCTO P ON P.producto=TV.producto
 where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO') AND p.nombre IN ('ARROZ','ATUN')
-GROUP BY t.nombre,p.nombre;
+GROUP BY t.nombre,p.nombre
+ORDER BY t.nombre,p.nombre;
 
 --ROLL UP
 SELECT t.nombre TIENDA,tp.nombre TIPO_PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
 FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
 inner join TIPO_PRODUCTO TP ON TP.TIPO_PRODUCTO=TV.TIPO_PRODUCTO
 where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO') AND TP.nombre IN ('LACTEOS','CARNES')
-GROUP BY t.nombre,tp.nombre;
+GROUP BY t.nombre,tp.nombre
+ORDER BY t.nombre,tp.nombre;
 
 --DRILL DOWN
 SELECT t.nombre TIENDA,p.nombre PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
 FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
 inner join PRODUCTO P ON P.producto=TV.producto
 where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO')
-GROUP BY t.nombre,p.nombre;
+GROUP BY t.nombre,p.nombre
+ORDER BY t.nombre,p.nombre;
