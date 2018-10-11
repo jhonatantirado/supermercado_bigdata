@@ -11,6 +11,15 @@ where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA','TIENDA MIRAFLORES LARCO') AND p.n
 GROUP BY t.nombre,p.nombre
 ORDER BY t.nombre,p.nombre;
 
+SELECT t.nombre TIENDA,p.nombre PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
+FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
+inner join PRODUCTO P ON P.producto=TV.producto
+inner join CLIENTE C ON C.cliente=TV.cliente
+where t.NOMBRE IN ('TIENDA SAN MIGUEL MARINA') AND p.nombre IN ('ARROZ')
+AND c.nombre='JHONATAN TIRADO'
+GROUP BY t.nombre,p.nombre
+ORDER BY t.nombre,p.nombre;
+
 --ROLL UP
 SELECT t.nombre TIENDA,tp.nombre TIPO_PRODUCTO,SUM(tv.TOTAL_SOLES) TOTAL_SOLES,SUM(tv.TOTAL_DOLARES)  TOTAL_DOLARES 
 FROM TOTAL_VENTA tv inner join TIENDA T ON T.tienda=TV.tienda
